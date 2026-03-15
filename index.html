@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#C8445A"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="WEARIT"/>
+<title>WEARIT — El estilista que te dice la verdad</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --rose:#C8445A;--rose-light:#F2C4CC;--rose-dark:#7A1A28;
+  --cream:#FAF8F5;--ink:#1A1118;--ink2:#4A3D47;--ink3:#9A8E96;
+  --surface:#FFFFFF;--surface2:#F5F2F0;
+  --border:rgba(26,17,24,0.08);--border2:rgba(26,17,24,0.14);
+  --shadow:0 2px 20px rgba(26,17,24,0.08);--shadow-md:0 8px 40px rgba(26,17,24,0.12);
+  --r:20px;--r-sm:12px;
+}
+html,body{height:100%;background:#E8E4E0;font-family:'Outfit',sans-serif;}
+.app-shell{
+  max-width:390px;margin:0 auto;height:100%;
+  background:var(--cream);display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+@media(min-width:600px){
+  .app-shell{height:100vh;border-radius:44px;margin:auto;box-shadow:var(--shadow-md);border:.5px solid var(--border2);}
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+}
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden;animation:fadeUp .25s ease;}
+.screen.active{display:flex;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.scroll{flex:1;overflow-y:auto;padding:0 20px 110px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* STATUS */
+.status-bar{padding:14px 24px 0;display:flex;justify-content:space-between;align-items:center;background:var(--cream);flex-shrink:0;}
+.status-time{font-size:15px;font-weight:500;color:var(--ink);}
+.status-icons{font-size:12px;color:var(--ink2);}
+
+/* LABELS */
+.sec-label{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin:22px 0 10px;}
+
+/* HERO */
+.home-hero{margin:16px 0 0;background:var(--ink);border-radius:28px;padding:26px 22px 22px;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(200,68,90,.35),transparent 70%);}
+.hero-glow2{position:absolute;bottom:-30px;left:-20px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(200,68,90,.2),transparent 70%);}
+.hero-greeting{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;}
+.hero-name{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:#fff;line-height:1.1;margin-bottom:4px;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.5);line-height:1.5;}
+.hero-racha{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:rgba(200,68,90,.25);border:1px solid rgba(200,68,90,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:500;color:var(--rose-light);}
+
+/* CARDS */
+.card{background:var(--surface);border-radius:22px;padding:18px;box-shadow:var(--shadow);border:.5px solid var(--border);}
+.outfit-home-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.outfit-home-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--ink);}
+.outfit-home-sub{font-size:12px;color:var(--ink3);margin-top:2px;}
+.ia-badge{background:var(--rose);color:white;border-radius:16px;padding:4px 10px;font-size:11px;font-weight:500;}
+.outfit-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.outfit-tag{background:var(--surface2);border-radius:18px;padding:5px 11px;font-size:12px;color:var(--ink2);border:.5px solid var(--border);}
+
+/* BUTTONS */
+.btn{background:var(--ink);color:white;border:none;border-radius:14px;padding:13px 18px;font-size:14px;font-weight:400;font-family:'Outfit',sans-serif;cursor:pointer;width:100%;letter-spacing:.01em;transition:opacity .15s,transform .1s;}
+.btn:active{transform:scale(.98);opacity:.88;}
+.btn-rose{background:var(--rose);}
+.btn-outline{background:none;color:var(--rose);border:1.5px solid var(--rose);}
+.btn-ghost{background:var(--surface2);color:var(--ink2);border:none;}
+
+/* AHORRO */
+.ahorro-card{background:var(--ink);border-radius:22px;padding:20px;position:relative;overflow:hidden;}
+.ahorro-glow{position:absolute;top:-20px;right:-20px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(90,180,60,.2),transparent 70%);}
+.ahorro-label{font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.ahorro-amount{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:#fff;margin-bottom:3px;}
+.ahorro-sub{font-size:12px;color:rgba(255,255,255,.38);margin-bottom:16px;}
+.exp-pill{background:rgba(255,255,255,.07);border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s;border:.5px solid rgba(255,255,255,.07);margin-bottom:8px;}
+.exp-pill:last-child{margin-bottom:0;}
+.exp-pill:active{background:rgba(255,255,255,.12);}
+.exp-emoji{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
+.exp-info{flex:1;}
+.exp-name{font-size:13px;color:#fff;margin-bottom:3px;}
+.exp-bar-bg{background:rgba(255,255,255,.1);border-radius:4px;height:3px;overflow:hidden;}
+.exp-bar-fill{background:linear-gradient(90deg,#7ACC44,#A8E063);height:100%;border-radius:4px;}
+.exp-pct{font-size:10px;color:rgba(255,255,255,.32);margin-top:3px;}
+.exp-arrow{font-size:14px;color:rgba(255,255,255,.3);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.stat-card{background:var(--surface);border-radius:16px;padding:12px 8px;text-align:center;box-shadow:var(--shadow);}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--rose);display:block;}
+.stat-lbl{font-size:10px;color:var(--ink3);margin-top:1px;line-height:1.3;}
+
+/* QUICK */
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.quick-card{background:var(--surface);border-radius:20px;padding:16px;cursor:pointer;box-shadow:var(--shadow);border:.5px solid var(--border);transition:transform .12s;}
+.quick-card:active{transform:scale(.96);}
+.quick-icon{font-size:22px;line-height:1;margin-bottom:8px;}
+.quick-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:2px;}
+.quick-sub{font-size:11px;color:var(--ink3);line-height:1.4;}
+
+/* ALERT */
+.alert{background:#FFF8EC;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;border:.5px solid rgba(200,150,0,.15);}
+.alert-icon{font-size:13px;flex-shrink:0;margin-top:2px;}
+.alert-text{font-size:12px;color:#7A5A00;line-height:1.6;}
+
+/* CLOSET */
+.closet-header{padding:20px 20px 0;}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--ink);}
+.page-sub{font-size:13px;color:var(--ink3);margin-top:2px;}
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding:12px 20px 0;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fchip{flex-shrink:0;padding:7px 15px;border-radius:20px;font-size:12px;cursor:pointer;background:var(--surface);border:.5px solid var(--border2);color:var(--ink2);font-family:'Outfit',sans-serif;transition:all .12s;white-space:nowrap;}
+.fchip.active{background:var(--ink);color:white;border-color:var(--ink);}
+.closet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 20px 0;}
+.ci{background:var(--surface);border-radius:18px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;border:.5px solid var(--border);position:relative;overflow:hidden;transition:transform .12s;}
+.ci:active{transform:scale(.94);}
+.ci img{width:100%;height:100%;object-fit:cover;border-radius:17px;}
+.ci-emoji{font-size:26px;line-height:1;}
+.ci-name{font-size:9px;color:var(--ink3);text-align:center;padding:0 4px;}
+.ci-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;}
+.dot-green{background:#5CBF44;}
+.dot-orange{background:#E8A020;}
+.ci-add{background:none;border:1.5px dashed var(--border2);border-radius:18px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .12s;}
+.ci-add:active{background:rgba(200,68,90,.05);border-color:var(--rose);}
+
+/* ADD PRENDA */
+.add-header{padding:22px 20px 0;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.back-btn{width:36px;height:36px;border-radius:50%;background:var(--surface);border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--ink2);flex-shrink:0;line-height:1;}
+.photo-zone{margin:16px 20px 0;background:var(--surface);border-radius:22px;border:1.5px dashed var(--border2);min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.photo-zone:active{border-color:var(--rose);}
+.photo-zone.has-photo{border-style:solid;border-color:var(--border);}
+.photo-zone img{width:100%;height:190px;object-fit:cover;border-radius:20px;display:none;}
+.photo-icon-big{font-size:34px;line-height:1;}
+.photo-hint-txt{font-size:14px;color:var(--ink2);}
+.photo-hint-sub{font-size:11px;color:var(--ink3);}
+.compress-badge{position:absolute;bottom:10px;right:10px;background:rgba(26,17,24,.7);color:white;border-radius:16px;padding:3px 10px;font-size:10px;display:none;}
+.compress-info{background:var(--surface2);border-radius:12px;padding:9px 12px;font-size:11px;color:var(--ink3);display:flex;gap:8px;align-items:flex-start;margin:10px 20px 0;line-height:1.5;}
+.field-label{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;margin-top:18px;display:block;}
+.field-input{width:100%;padding:12px 14px;border:.5px solid var(--border2);border-radius:14px;font-size:14px;font-family:'Outfit',sans-serif;background:var(--surface);color:var(--ink);outline:none;transition:border-color .15s;}
+.field-input:focus{border-color:var(--rose);}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{padding:7px 14px;border-radius:18px;font-size:13px;cursor:pointer;border:.5px solid var(--border2);background:var(--surface);color:var(--ink2);font-family:'Outfit',sans-serif;transition:all .12s;}
+.chip.active{background:var(--ink);color:white;border-color:var(--ink);}
+.color-row{display:flex;flex-wrap:wrap;gap:10px;}
+.cdot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:transform .12s,border-color .15s;}
+.cdot:active{transform:scale(.88);}
+.cdot.active{border-color:var(--rose);transform:scale(1.12);}
+.form-section{padding:0 20px;}
+
+/* IA */
+.ia-header{padding:22px 20px 0;flex-shrink:0;}
+.mood-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mood-card{background:var(--surface);border-radius:20px;padding:15px;cursor:pointer;border:.5px solid var(--border);box-shadow:var(--shadow);transition:all .12s;}
+.mood-card.active{background:var(--ink);border-color:var(--ink);}
+.mood-card.active .mood-name{color:white;}
+.mood-card.active .mood-desc{color:rgba(255,255,255,.45);}
+.mood-emoji{font-size:24px;line-height:1;margin-bottom:7px;}
+.mood-name{font-size:14px;font-weight:500;color:var(--ink);}
+.mood-desc{font-size:11px;color:var(--ink3);margin-top:2px;}
+.ia-result{background:var(--ink);border-radius:22px;padding:20px;margin-top:14px;position:relative;overflow:hidden;}
+.ia-res-glow{position:absolute;top:-20px;right:-20px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(200,68,90,.3),transparent 70%);}
+.ia-res-badge{display:inline-block;background:var(--rose);color:white;border-radius:16px;padding:4px 11px;font-size:11px;font-weight:500;margin-bottom:10px;}
+.ia-res-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:white;margin-bottom:5px;}
+.ia-res-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:14px;}
+.ia-res-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.ia-res-tag{background:rgba(255,255,255,.1);border-radius:16px;padding:5px 11px;font-size:12px;color:rgba(255,255,255,.75);}
+.typing{display:flex;gap:4px;align-items:center;justify-content:center;padding:20px 0;}
+.tdot{width:7px;height:7px;border-radius:50%;background:var(--rose);animation:td 1s infinite;}
+.tdot:nth-child(2){animation-delay:.2s;}.tdot:nth-child(3){animation-delay:.4s;}
+@keyframes td{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-6px);opacity:1}}
+.load-txt{font-size:12px;color:var(--ink3);text-align:center;margin-top:4px;}
+
+/* CHAT */
+.chat-area{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+.msg-user{align-self:flex-end;background:var(--rose);color:white;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:13px;line-height:1.5;max-width:80%;}
+.msg-ia-wrap{display:flex;gap:8px;align-items:flex-end;max-width:90%;}
+.msg-av{width:26px;height:26px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;flex-shrink:0;font-family:'Cormorant Garamond',serif;}
+.msg-ia{background:var(--surface);border-radius:18px 18px 18px 4px;padding:10px 14px;font-size:13px;color:var(--ink2);line-height:1.6;border:.5px solid var(--border);}
+.sug-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.sug{padding:6px 12px;border-radius:14px;font-size:11px;background:var(--surface);border:.5px solid var(--border2);color:var(--ink2);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .12s;}
+.sug:active{background:rgba(200,68,90,.08);border-color:var(--rose);}
+.chat-bar{display:flex;gap:8px;align-items:flex-end;background:var(--surface);border-radius:18px;border:.5px solid var(--border2);padding:9px 12px;margin-top:10px;}
+.chat-inp{flex:1;border:none;outline:none;resize:none;font-size:14px;font-family:'Outfit',sans-serif;background:transparent;color:var(--ink);min-height:22px;max-height:70px;overflow-y:auto;line-height:1.5;}
+.chat-inp::placeholder{color:var(--ink3);}
+.chat-send{width:32px;height:32px;border-radius:50%;background:var(--rose);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;}
+
+/* PERFIL */
+.profile-hero{background:var(--ink);margin:18px 20px 0;border-radius:26px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;overflow:hidden;}
+.p-glow{position:absolute;top:-20px;right:-20px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(200,68,90,.3),transparent 70%);}
+.avatar{width:64px;height:64px;border-radius:50%;background:var(--rose);display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid rgba(255,255,255,.15);}
+.p-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:white;}
+.p-sub{font-size:12px;color:rgba(255,255,255,.38);}
+.racha-pill{display:flex;align-items:center;gap:8px;background:rgba(200,68,90,.22);border:1px solid rgba(200,68,90,.3);border-radius:16px;padding:10px 16px;margin-top:4px;}
+.racha-n{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:white;line-height:1;}
+.racha-txt{font-size:12px;color:rgba(255,255,255,.45);line-height:1.5;}
+.settings-card{background:var(--surface);border-radius:20px;margin:0 20px;padding:0 16px;border:.5px solid var(--border);}
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:.5px solid var(--border);}
+.tog-row:last-child{border-bottom:none;}
+.tog-left{display:flex;align-items:center;gap:10px;}
+.tog-icon{font-size:15px;width:20px;text-align:center;}
+.tog-label{font-size:14px;color:var(--ink);}
+.tog-sub{font-size:11px;color:var(--ink3);margin-top:1px;}
+.tog{width:42px;height:25px;border-radius:13px;background:var(--border2);position:relative;cursor:pointer;border:none;transition:background .18s;flex-shrink:0;}
+.tog.on{background:var(--rose);}
+.tog::after{content:'';position:absolute;width:19px;height:19px;border-radius:50%;background:white;top:3px;left:3px;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+.tog.on::after{left:20px;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(26,17,24,.55);display:none;align-items:flex-end;justify-content:center;z-index:100;backdrop-filter:blur(6px);}
+.modal-bg.show{display:flex;}
+@media(min-width:600px){.modal-bg{position:absolute;border-radius:44px;}}
+.modal{background:var(--surface);border-radius:26px 26px 0 0;padding:26px 20px 40px;width:100%;max-width:390px;display:flex;flex-direction:column;gap:12px;}
+.modal-handle{width:34px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 4px;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);}
+.modal-amount{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--rose);}
+.modal-bar-bg{background:var(--surface2);border-radius:6px;height:7px;overflow:hidden;}
+.modal-bar-fill{background:linear-gradient(90deg,var(--rose),#E87A8C);height:100%;border-radius:6px;transition:width 1s ease;}
+.modal-text{font-size:13px;color:var(--ink2);line-height:1.7;}
+.modal-detail{background:var(--surface2);border-radius:14px;padding:13px;font-size:12px;color:var(--ink3);line-height:1.8;white-space:pre-line;}
+.error-msg{background:#FFF0F0;border-radius:12px;padding:10px 14px;font-size:12px;color:#8B2020;margin-top:8px;display:none;border:.5px solid rgba(200,68,90,.15);}
+
+/* NAV */
+.nav{position:absolute;bottom:0;left:0;right:0;background:rgba(250,248,245,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:.5px solid var(--border);display:flex;padding:8px 0 28px;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:10px;font-family:'Outfit',sans-serif;padding:4px 0;transition:color .15s;}
+.nb.active{color:var(--rose);}
+.nb-icon{font-size:19px;line-height:1;}
+.nb-dot{width:4px;height:4px;border-radius:50%;background:var(--rose);margin:1px auto 0;opacity:0;}
+.nb.active .nb-dot{opacity:1;}
+
+/* ONBOARDING */
+.ob-screen{position:absolute;inset:0;background:var(--cream);z-index:200;display:flex;flex-direction:column;}
+.ob-hero{background:var(--ink);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px 32px;position:relative;overflow:hidden;}
+.ob-glow{position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(200,68,90,.3),transparent 70%);}
+.ob-glow2{position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(200,68,90,.18),transparent 70%);}
+.ob-emoji{font-size:70px;line-height:1;margin-bottom:20px;z-index:1;}
+.ob-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:white;text-align:center;margin-bottom:10px;z-index:1;line-height:1.2;}
+.ob-sub{font-size:14px;color:rgba(255,255,255,.5);text-align:center;line-height:1.7;z-index:1;}
+.ob-bottom{background:var(--cream);padding:24px 24px 40px;display:flex;flex-direction:column;gap:12px;}
+.ob-dots{display:flex;justify-content:center;gap:6px;margin-bottom:4px;}
+.ob-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:all .25s;}
+.ob-dot.active{background:var(--rose);width:18px;border-radius:3px;}
+.style-chips{display:flex;flex-wrap:wrap;gap:8px;}
+</style>
+</head>
+<body>
+<div class="app-shell" id="appShell">
+
+<!-- ONBOARDING -->
+<div class="ob-screen" id="obScreen">
+  <div id="ob1" style="display:flex;flex-direction:column;flex:1;">
+    <div class="ob-hero"><div class="ob-glow"></div><div class="ob-glow2"></div>
+      <div class="ob-emoji">👗</div>
+      <div class="ob-title">Hola, soy WEARIT</div>
+      <div class="ob-sub">Tu closet está lleno.<br>Pero igual dices que no tienes nada.<br><br>Eso termina hoy.</div>
+    </div>
+    <div class="ob-bottom">
+      <div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+      <button class="btn btn-rose" onclick="obGo(2)">Empezar →</button>
+    </div>
+  </div>
+  <div id="ob2" style="display:none;flex-direction:column;flex:1;">
+    <div class="ob-hero"><div class="ob-glow"></div><div class="ob-glow2"></div>
+      <div class="ob-emoji">✨</div>
+      <div class="ob-title">¿Cómo te llamas?</div>
+      <div class="ob-sub">Para que WEARIT te hable directo,<br>sin rodeos y sin filtros.</div>
+    </div>
+    <div class="ob-bottom">
+      <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+      <input class="field-input" id="ob-nombre" type="text" placeholder="Tu nombre..." style="margin:0;"/>
+      <button class="btn btn-rose" onclick="obGo(3)">Continuar →</button>
+    </div>
+  </div>
+  <div id="ob3" style="display:none;flex-direction:column;flex:1;">
+    <div class="ob-hero"><div class="ob-glow"></div><div class="ob-glow2"></div>
+      <div class="ob-emoji">🪞</div>
+      <div class="ob-title">¿Cuál es tu estilo?</div>
+      <div class="ob-sub">Elige todos los que te representen.<br>La IA armará outfits a tu medida.</div>
+    </div>
+    <div class="ob-bottom">
+      <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
+      <div class="style-chips" id="styleChips">
+        <div class="chip active" onclick="this.classList.toggle('active')">Casual</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Minimalista</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Elegante</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Bohemio</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Clásico</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Deportivo</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Trendy</div>
+      </div>
+      <button class="btn btn-rose" onclick="obGo(4)">Continuar →</button>
+    </div>
+  </div>
+  <div id="ob4" style="display:none;flex-direction:column;flex:1;">
+    <div class="ob-hero"><div class="ob-glow"></div><div class="ob-glow2"></div>
+      <div class="ob-emoji">🔥</div>
+      <div class="ob-title">Lista para empezar</div>
+      <div class="ob-sub">WEARIT te ayudará a:<br><br>✓ Armar outfits con lo que tienes<br>✓ Dejar de comprar por impulso<br>✓ Convertir el ahorro en experiencias</div>
+    </div>
+    <div class="ob-bottom">
+      <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div>
+      <button class="btn btn-rose" onclick="finishOB()">Entrar a WEARIT →</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+  <div class="status-bar"><div class="status-time" id="clock">9:41</div><div class="status-icons">▲▲▲ ⬤</div></div>
+  <div class="scroll">
+    <div class="home-hero"><div class="hero-glow"></div><div class="hero-glow2"></div>
+      <div class="hero-greeting" id="greeting">Buenos días</div>
+      <div class="hero-name" id="hero-name">Hola, Sofía</div>
+      <div class="hero-sub">Llevas 7 días sin compras impulsivas.</div>
+      <div class="hero-racha">🔥 Racha de 7 días — sigue así</div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <div class="outfit-home-top">
+        <div><div class="outfit-home-name">Casual con estilo</div><div class="outfit-home-sub">Outfit sugerido para hoy</div></div>
+        <div class="ia-badge">IA</div>
+      </div>
+      <div class="outfit-tags">
+        <div class="outfit-tag">🧥 Blazer beige</div><div class="outfit-tag">👚 Blusa blanca</div>
+        <div class="outfit-tag">👖 Jean oscuro</div><div class="outfit-tag">👟 Zapatillas</div>
+      </div>
+      <button class="btn btn-rose" onclick="goScreen('s-ia')">Generar otro →</button>
+    </div>
+    <div class="sec-label">lo que no gastaste</div>
+    <div class="ahorro-card"><div class="ahorro-glow"></div>
+      <div class="ahorro-label">Ahorro estimado este mes</div>
+      <div class="ahorro-amount">$47.000</div>
+      <div class="ahorro-sub">3 compras impulsivas evitadas</div>
+      <div class="exp-pill" onclick="openModal('playa')"><div class="exp-emoji">🏖️</div><div class="exp-info"><div class="exp-name">Fin de semana en la playa</div><div class="exp-bar-bg"><div class="exp-bar-fill" style="width:85%"></div></div><div class="exp-pct">85% cubierto · ~$55.000</div></div><div class="exp-arrow">›</div></div>
+      <div class="exp-pill" onclick="openModal('spa')"><div class="exp-emoji">💆‍♀️</div><div class="exp-info"><div class="exp-name">Día de spa completo</div><div class="exp-bar-bg"><div class="exp-bar-fill" style="width:100%"></div></div><div class="exp-pct">¡Ya puedes pagarlo! · ~$35.000</div></div><div class="exp-arrow">›</div></div>
+      <div class="exp-pill" onclick="openModal('cena')"><div class="exp-emoji">🍽️</div><div class="exp-info"><div class="exp-name">Cena especial</div><div class="exp-bar-bg"><div class="exp-bar-fill" style="width:100%"></div></div><div class="exp-pct">¡Ya puedes pagarlo! · ~$18.000</div></div><div class="exp-arrow">›</div></div>
+      <div class="exp-pill" onclick="openModal('viaje')"><div class="exp-emoji">✈️</div><div class="exp-info"><div class="exp-name">Vacaciones soñadas</div><div class="exp-bar-bg"><div class="exp-bar-fill" style="width:9%"></div></div><div class="exp-pct">9% de la meta · ~$500.000</div></div><div class="exp-arrow">›</div></div>
+    </div>
+    <div class="sec-label">resumen</div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-num" id="stat-prendas">34</span><div class="stat-lbl">prendas</div></div>
+      <div class="stat-card"><span class="stat-num">47</span><div class="stat-lbl">outfits creados</div></div>
+      <div class="stat-card"><span class="stat-num">7</span><div class="stat-lbl">días racha</div></div>
+    </div>
+    <div class="sec-label">acciones rápidas</div>
+    <div class="quick-grid">
+      <div class="quick-card" onclick="goScreen('s-add')"><div class="quick-icon">📷</div><div class="quick-title">Agregar prenda</div><div class="quick-sub">Foto + categoría</div></div>
+      <div class="quick-card" onclick="goScreen('s-ia')"><div class="quick-icon">✦</div><div class="quick-title">Outfit con IA</div><div class="quick-sub">Generado para hoy</div></div>
+      <div class="quick-card" onclick="goScreen('s-closet')"><div class="quick-icon">◫</div><div class="quick-title">Ver closet</div><div class="quick-sub" id="closet-count-lbl">34 prendas guardadas</div></div>
+      <div class="quick-card" onclick="goScreen('s-perfil')"><div class="quick-icon">📊</div><div class="quick-title">Mi progreso</div><div class="quick-sub">Logros y estadísticas</div></div>
+    </div>
+    <div class="alert" style="margin-top:4px;"><div class="alert-icon">⚡</div><div class="alert-text">Tienes 8 prendas sin usar este mes. Antes de comprar algo nuevo, revisa tu closet.</div></div>
+  </div>
+</div>
+
+<!-- CLOSET -->
+<div class="screen" id="s-closet">
+  <div class="closet-header"><div class="page-title">Mi closet</div><div class="page-sub" id="closet-sub-lbl">34 prendas · 8 sin usar</div></div>
+  <div class="filter-row">
+    <div class="fchip active" onclick="filt(this)">Todos</div><div class="fchip" onclick="filt(this)">Tops</div>
+    <div class="fchip" onclick="filt(this)">Pantalones</div><div class="fchip" onclick="filt(this)">Vestidos</div>
+    <div class="fchip" onclick="filt(this)">Abrigos</div><div class="fchip" onclick="filt(this)">Calzado</div>
+  </div>
+  <div class="scroll" style="padding-left:20px;padding-right:20px;">
+    <div class="closet-grid" id="closet-grid" style="padding:12px 0 0;">
+      <div class="ci"><div class="ci-dot dot-green"></div><div class="ci-emoji">👖</div><div class="ci-name">Jean oscuro</div></div>
+      <div class="ci"><div class="ci-dot dot-green"></div><div class="ci-emoji">👚</div><div class="ci-name">Blusa blanca</div></div>
+      <div class="ci"><div class="ci-dot dot-orange"></div><div class="ci-emoji">🧥</div><div class="ci-name">Blazer beige</div></div>
+      <div class="ci"><div class="ci-dot dot-orange"></div><div class="ci-emoji">👗</div><div class="ci-name">Vestido flores</div></div>
+      <div class="ci"><div class="ci-dot dot-green"></div><div class="ci-emoji">👟</div><div class="ci-name">Zapatillas</div></div>
+      <div class="ci"><div class="ci-dot dot-orange"></div><div class="ci-emoji">👠</div><div class="ci-name">Tacos negros</div></div>
+      <div class="ci"><div class="ci-dot dot-orange"></div><div class="ci-emoji">🧣</div><div class="ci-name">Bufanda gris</div></div>
+      <div class="ci"><div class="ci-dot dot-green"></div><div class="ci-emoji">👜</div><div class="ci-name">Cartera negra</div></div>
+      <div class="ci-add" onclick="goScreen('s-add')"><div style="font-size:22px;color:var(--ink3);">+</div><div style="font-size:9px;color:var(--ink3);">Agregar</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AGREGAR PRENDA -->
+<div class="screen" id="s-add">
+  <div class="add-header"><div class="back-btn" onclick="goScreen('s-closet')">‹</div><div class="page-title">Nueva prenda</div></div>
+  <div class="scroll">
+    <div class="photo-zone" id="photoZone" onclick="document.getElementById('fileIn').click()">
+      <img id="photoPreview" alt="preview"/>
+      <div id="photoPlaceholder"><div class="photo-icon-big">📷</div><div class="photo-hint-txt">Agregar foto</div><div class="photo-hint-sub">Se comprime automáticamente</div></div>
+      <div class="compress-badge" id="compressBadge">—</div>
+    </div>
+    <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="handlePhoto(this)"/>
+    <div class="compress-info"><span>⚡</span><span>Compresión automática — una foto de 4MB queda en ~150KB sin perder calidad visible.</span></div>
+    <div class="form-section">
+      <span class="field-label">Nombre</span>
+      <input class="field-input" type="text" id="prendaNombre" placeholder="Ej: Jean azul oscuro, Blusa floral..."/>
+      <span class="field-label">Categoría</span>
+      <div class="chips-wrap" id="catChips">
+        <div class="chip active" onclick="selChip(this,'cat')">Tops</div><div class="chip" onclick="selChip(this,'cat')">Pantalones</div>
+        <div class="chip" onclick="selChip(this,'cat')">Vestidos</div><div class="chip" onclick="selChip(this,'cat')">Abrigos</div>
+        <div class="chip" onclick="selChip(this,'cat')">Calzado</div><div class="chip" onclick="selChip(this,'cat')">Accesorios</div>
+      </div>
+      <span class="field-label">Color</span>
+      <div class="color-row">
+        <div class="cdot active" style="background:#1a1a1a;" data-c="Negro" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#f5f5f5;border:.5px solid #ccc;" data-c="Blanco" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#c8a87a;" data-c="Beige" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#5a7ab0;" data-c="Azul" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#b84c4c;" data-c="Rojo" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#5a9e5a;" data-c="Verde" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#d47098;" data-c="Rosa" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#8878c0;" data-c="Lila" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:#888;" data-c="Gris" onclick="selColor(this)"></div>
+        <div class="cdot" style="background:conic-gradient(red,yellow,green,blue,purple,red);" data-c="Estampado" onclick="selColor(this)"></div>
+      </div>
+      <span class="field-label">Ocasión</span>
+      <div class="chips-wrap" id="ocChips">
+        <div class="chip active" onclick="this.classList.toggle('active')">Casual</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Trabajo</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Salidas</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Deporte</div>
+        <div class="chip" onclick="this.classList.toggle('active')">Casa</div>
+      </div>
+      <div style="height:20px;"></div>
+      <button class="btn btn-rose" onclick="guardarPrenda()">Guardar prenda</button>
+      <div style="height:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- IA -->
+<div class="screen" id="s-ia">
+  <div class="ia-header"><div class="page-title">Outfit con IA</div><div class="page-sub">El estilista que te dice la verdad</div></div>
+  <div class="scroll">
+    <div class="sec-label">¿qué onda es hoy?</div>
+    <div class="mood-grid">
+      <div class="mood-card active" onclick="selMood('Casual',this)"><div class="mood-emoji">👟</div><div class="mood-name">Casual</div><div class="mood-desc">Cómoda y cool</div></div>
+      <div class="mood-card" onclick="selMood('Trabajo',this)"><div class="mood-emoji">💼</div><div class="mood-name">Trabajo</div><div class="mood-desc">Seria sin exagerar</div></div>
+      <div class="mood-card" onclick="selMood('Salida',this)"><div class="mood-emoji">✨</div><div class="mood-name">Salida</div><div class="mood-desc">Que te vean bien</div></div>
+      <div class="mood-card" onclick="selMood('En casa',this)"><div class="mood-emoji">🛋️</div><div class="mood-name">En casa</div><div class="mood-desc">Sin compromisos</div></div>
+    </div>
+    <div style="height:14px;"></div>
+    <button class="btn btn-rose" id="btnIA" onclick="generarIA()">✦ Generar mi outfit</button>
+    <div class="error-msg" id="iaError">No se pudo conectar con la IA. Verifica tu conexión e intenta de nuevo.</div>
+    <div id="iaLoading" style="display:none;"><div class="typing"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><div class="load-txt" id="loadTxt">Analizando tu closet...</div></div>
+    <div id="iaResultado" style="display:none;">
+      <div class="ia-result"><div class="ia-res-glow"></div>
+        <div class="ia-res-badge" id="irBadge">Casual</div>
+        <div class="ia-res-name" id="irName">—</div>
+        <div class="ia-res-desc" id="irDesc">—</div>
+        <div class="ia-res-tags" id="irTags"></div>
+      </div>
+      <div class="sec-label">pregúntale a WEARIT</div>
+      <div class="sug-row">
+        <div class="sug" onclick="usarSug(this)">¿Qué zapatos van mejor?</div>
+        <div class="sug" onclick="usarSug(this)">Dame algo más formal</div>
+        <div class="sug" onclick="usarSug(this)">¿Necesito comprar algo?</div>
+      </div>
+      <div class="chat-area" id="chatArea"></div>
+      <div class="chat-bar">
+        <textarea class="chat-inp" id="chatInp" placeholder="Pregunta algo..." rows="1" onkeydown="chatKey(event)"></textarea>
+        <button class="chat-send" onclick="enviarChat()">↑</button>
+      </div>
+      <div style="height:8px;"></div>
+      <button class="btn btn-ghost" style="margin-top:6px;" onclick="resetIA()">← Generar otro</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERFIL -->
+<div class="screen" id="s-perfil">
+  <div class="status-bar"><div class="status-time">Perfil</div></div>
+  <div class="scroll">
+    <div class="profile-hero"><div class="p-glow"></div>
+      <div class="avatar">💁‍♀️</div>
+      <div class="p-name" id="p-name">Sofía</div>
+      <div class="p-sub">WEARIT · 14 días activa</div>
+      <div class="racha-pill"><div style="font-size:22px;">🔥</div><div><div class="racha-n">7</div><div class="racha-txt">días sin compra impulsiva<br>Récord: 12 días</div></div></div>
+    </div>
+    <div class="sec-label" style="padding:0 20px;">estadísticas</div>
+    <div class="stats-row" style="padding:0 20px;">
+      <div class="stat-card"><span class="stat-num">34</span><div class="stat-lbl">prendas</div></div>
+      <div class="stat-card"><span class="stat-num">$47K</span><div class="stat-lbl">no gastado</div></div>
+      <div class="stat-card"><span class="stat-num">3</span><div class="stat-lbl">donadas</div></div>
+    </div>
+    <div class="sec-label" style="padding:0 20px;">configuración</div>
+    <div class="settings-card">
+      <div class="tog-row"><div class="tog-left"><div class="tog-icon">🔔</div><div><div class="tog-label">Outfit del día</div><div class="tog-sub">Notificación a las 7:30</div></div></div><button class="tog on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="tog-row"><div class="tog-left"><div class="tog-icon">🛑</div><div><div class="tog-label">Filtro anti-impulso</div><div class="tog-sub">48h antes de comprar</div></div></div><button class="tog on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="tog-row"><div class="tog-left"><div class="tog-icon">📍</div><div><div class="tog-label">Clima automático</div><div class="tog-sub">Usa tu ubicación</div></div></div><button class="tog on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="tog-row"><div class="tog-left"><div class="tog-icon">🔥</div><div><div class="tog-label">Alerta de racha</div><div class="tog-sub">No pierdas tu racha</div></div></div><button class="tog" onclick="this.classList.toggle('on')"></button></div>
+    </div>
+    <div style="height:20px;"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nb active" id="nb-home" onclick="goScreen('s-home')"><div class="nb-icon">⌂</div><div>Inicio</div><div class="nb-dot"></div></button>
+  <button class="nb" id="nb-closet" onclick="goScreen('s-closet')"><div class="nb-icon">◫</div><div>Closet</div><div class="nb-dot"></div></button>
+  <button class="nb" id="nb-ia" onclick="goScreen('s-ia')"><div class="nb-icon">✦</div><div>Outfit</div><div class="nb-dot"></div></button>
+  <button class="nb" id="nb-perfil" onclick="goScreen('s-perfil')"><div class="nb-icon">◉</div><div>Perfil</div><div class="nb-dot"></div></button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div style="font-size:38px;" id="mEmoji">🏖️</div>
+    <div class="modal-title" id="mTitle">—</div>
+    <div class="modal-amount" id="mAmount">—</div>
+    <div class="modal-bar-bg"><div class="modal-bar-fill" id="mBar" style="width:0%"></div></div>
+    <div class="modal-text" id="mText">—</div>
+    <div class="modal-detail" id="mDetail">—</div>
+    <button class="btn btn-rose" onclick="closeModal()">Seguir ahorrando →</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+const API_ENDPOINT = "/.netlify/functions/claude";
+
+// ── STATE ───────────────────────────────────────────────
+let userName = "Sofía";
+let currentMood = "Casual";
+let chatHistory = [];
+let closetItems = [
+  {emoji:"👖",name:"Jean oscuro",cat:"Pantalones"},
+  {emoji:"👚",name:"Blusa blanca",cat:"Tops"},
+  {emoji:"🧥",name:"Blazer beige",cat:"Abrigos"},
+  {emoji:"👗",name:"Vestido flores",cat:"Vestidos"},
+  {emoji:"👟",name:"Zapatillas blancas",cat:"Calzado"},
+  {emoji:"👠",name:"Tacos negros",cat:"Calzado"},
+  {emoji:"🧣",name:"Bufanda gris",cat:"Accesorios"},
+  {emoji:"👜",name:"Cartera negra",cat:"Accesorios"}
+];
+
+// ── ONBOARDING ──────────────────────────────────────────
+function obGo(n) {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById("ob"+i);
+    if (el) el.style.display = i===n ? "flex" : "none";
+  });
+}
+
+function finishOB() {
+  const n = document.getElementById("ob-nombre").value.trim();
+  if (n) {
+    userName = n;
+    document.getElementById("hero-name").textContent = "Hola, " + n;
+    document.getElementById("p-name").textContent = n;
+  }
+  document.getElementById("obScreen").style.display = "none";
+  localStorage.setItem("wearit_name", userName);
+}
+
+// Check if already onboarded
+window.addEventListener("DOMContentLoaded", () => {
+  const saved = localStorage.getItem("wearit_name");
+  if (saved) {
+    userName = saved;
+    document.getElementById("hero-name").textContent = "Hola, " + saved;
+    document.getElementById("p-name").textContent = saved;
+    document.getElementById("obScreen").style.display = "none";
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+});
+
+// ── CLOCK & GREETING ────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  document.getElementById("clock").textContent = h + ":" + (m < 10 ? "0" : "") + m;
+  const g = h < 12 ? "Buenos días" : h < 19 ? "Buenas tardes" : "Buenas noches";
+  document.getElementById("greeting").textContent = g;
+}
+
+// ── NAVIGATION ──────────────────────────────────────────
+function goScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  const map = {"s-home":"nb-home","s-closet":"nb-closet","s-ia":"nb-ia","s-perfil":"nb-perfil"};
+  document.querySelectorAll(".nb").forEach(b => b.classList.remove("active"));
+  if (map[id]) document.getElementById(map[id]).classList.add("active");
+}
+
+// ── MODAL EXPERIENCIAS ──────────────────────────────────
+const expData = {
+  playa:{emoji:"🏖️",title:"Fin de semana en la playa",amount:"$47.000 de $55.000",pct:85,
+    text:"Con lo que no gastaste este mes estás muy cerca. Solo 2 semanas más sin compras impulsivas y el fin de semana en la playa es tuyo.",
+    detail:"3 compras evitadas × $15.700 = $47.100 ahorrado\nFaltan ~$8.000 más — menos de una compra impulsiva."},
+  spa:{emoji:"💆‍♀️",title:"Día de spa completo",amount:"¡Ya puedes pagarlo!",pct:100,
+    text:"Ese día de spa que siempre pospones ya está pagado con lo que no gastaste. Resérvalo esta semana.",
+    detail:"Día de spa completo: ~$35.000\nTienes $47.000 ahorrado — te sobran $12.000."},
+  cena:{emoji:"🍽️",title:"Cena especial",amount:"¡Ya puedes pagarlo!",pct:100,
+    text:"Una cena especial con las personas que quieres está completamente cubierta.",
+    detail:"Cena para 4: ~$18.000\nCon $47.000 alcanza la cena y mucho más."},
+  viaje:{emoji:"✈️",title:"Vacaciones soñadas",amount:"$47.000 de $500.000",pct:9,
+    text:"Las vacaciones grandes requieren constancia. A este ritmo en 10 meses tienes el viaje completo.",
+    detail:"Meta: $500.000\nAhorro mensual actual: ~$47.000\nTiempo estimado: 10 meses"}
+};
+
+function openModal(key) {
+  const d = expData[key];
+  document.getElementById("mEmoji").textContent = d.emoji;
+  document.getElementById("mTitle").textContent = d.title;
+  document.getElementById("mAmount").textContent = d.amount;
+  document.getElementById("mText").textContent = d.text;
+  document.getElementById("mDetail").textContent = d.detail;
+  document.getElementById("modalBg").classList.add("show");
+  setTimeout(() => { document.getElementById("mBar").style.width = d.pct + "%"; }, 80);
+}
+function closeModal() {
+  document.getElementById("modalBg").classList.remove("show");
+  document.getElementById("mBar").style.width = "0%";
+}
+
+// ── CLOSET ──────────────────────────────────────────────
+function filt(el) {
+  document.querySelectorAll(".fchip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function selChip(el, group) {
+  el.closest(".chips-wrap").querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function selColor(el) {
+  document.querySelectorAll(".cdot").forEach(d => d.classList.remove("active"));
+  el.classList.add("active");
+}
+
+// ── FOTO CON COMPRESIÓN ─────────────────────────────────
+function handlePhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const origKB = Math.round(file.size / 1024);
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+      else { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL("image/jpeg", 0.72);
+      const compKB = Math.round((compressed.length * 3 / 4) / 1024);
+      const preview = document.getElementById("photoPreview");
+      preview.src = compressed;
+      preview.style.display = "block";
+      document.getElementById("photoPlaceholder").style.display = "none";
+      document.getElementById("photoZone").classList.add("has-photo");
+      const badge = document.getElementById("compressBadge");
+      badge.textContent = origKB + "KB → " + compKB + "KB";
+      badge.style.display = "block";
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function guardarPrenda() {
+  const nombre = document.getElementById("prendaNombre").value.trim() || "Nueva prenda";
+  const cat = document.querySelector("#catChips .chip.active")?.textContent || "Tops";
+  const preview = document.getElementById("photoPreview");
+  const hasPhoto = preview.style.display === "block";
+  const grid = document.getElementById("closet-grid");
+  const addBtn = grid.querySelector(".ci-add");
+  const item = document.createElement("div");
+  item.className = "ci";
+  if (hasPhoto) {
+    const img = document.createElement("img");
+    img.src = preview.src;
+    item.appendChild(img);
+  } else {
+    item.innerHTML = `<div class="ci-emoji">👗</div><div class="ci-name">${nombre}</div>`;
+  }
+  const dot = document.createElement("div");
+  dot.className = "ci-dot dot-green";
+  item.appendChild(dot);
+  grid.insertBefore(item, addBtn);
+  closetItems.push({ emoji: "👗", name: nombre, cat });
+  // Reset
+  document.getElementById("prendaNombre").value = "";
+  preview.style.display = "none";
+  preview.src = "";
+  document.getElementById("photoPlaceholder").style.display = "";
+  document.getElementById("compressBadge").style.display = "none";
+  document.getElementById("photoZone").classList.remove("has-photo");
+  document.getElementById("fileIn").value = "";
+  // Update counts
+  const count = closetItems.length;
+  document.getElementById("stat-prendas").textContent = count;
+  document.getElementById("closet-count-lbl").textContent = count + " prendas guardadas";
+  document.getElementById("closet-sub-lbl").textContent = count + " prendas · 8 sin usar";
+  goScreen("s-closet");
+}
+
+// ── IA ──────────────────────────────────────────────────
+function selMood(mood, el) {
+  currentMood = mood;
+  document.querySelectorAll(".mood-card").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+}
+
+async function callClaude(system, messages) {
+  const res = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ system, messages })
+  });
+  return await res.json();
+}
+
+async function generarIA() {
+  document.getElementById("btnIA").disabled = true;
+  document.getElementById("iaLoading").style.display = "block";
+  document.getElementById("iaResultado").style.display = "none";
+  document.getElementById("iaError").style.display = "none";
+  chatHistory = [];
+
+  const msgs = ["Analizando tu closet...","Combinando estilos...","Eligiendo el mejor look...","Preparando tu recomendación..."];
+  let i = 0;
+  const iv = setInterval(() => { i = (i+1)%msgs.length; document.getElementById("loadTxt").textContent = msgs[i]; }, 800);
+
+  const lista = closetItems.map(p => `${p.emoji} ${p.name}`).join(", ");
+  const sys = `Eres WEARIT, estilista personal con tono directo y sin filtros. Español neutro latinoamericano. Responde SOLO con JSON sin backticks:
+{"badge":"etiqueta corta","nombre_outfit":"nombre creativo","descripcion":"2 oraciones directas sobre por qué funciona","prendas":["emoji nombre","emoji nombre","emoji nombre"]}`;
+  const prompt = `La usuaria se llama ${userName}. Quiere un look para: ${currentMood}. Su closet: ${lista}. Genera el outfit ideal solo con estas prendas.`;
+  chatHistory = [{ role: "user", content: prompt }];
+
+  try {
+    const data = await callClaude(sys, chatHistory);
+    clearInterval(iv);
+    const raw = data.content?.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
+    const res = JSON.parse(raw);
+    chatHistory.push({ role: "assistant", content: raw });
+    document.getElementById("irBadge").textContent = res.badge || currentMood;
+    document.getElementById("irName").textContent = res.nombre_outfit;
+    document.getElementById("irDesc").textContent = res.descripcion;
+    document.getElementById("irTags").innerHTML = res.prendas.map(p => `<div class="ia-res-tag">${p}</div>`).join("");
+    document.getElementById("iaLoading").style.display = "none";
+    document.getElementById("iaResultado").style.display = "block";
+  } catch(e) {
+    clearInterval(iv);
+    document.getElementById("iaLoading").style.display = "none";
+    document.getElementById("iaError").style.display = "block";
+    document.getElementById("btnIA").disabled = false;
+  }
+}
+
+async function enviarChat() {
+  const inp = document.getElementById("chatInp");
+  const msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = "";
+  const area = document.getElementById("chatArea");
+  const uDiv = document.createElement("div");
+  uDiv.className = "msg-user"; uDiv.textContent = msg;
+  area.appendChild(uDiv);
+  const tw = document.createElement("div");
+  tw.className = "msg-ia-wrap";
+  tw.innerHTML = `<div class="msg-av">W</div><div class="msg-ia"><div class="typing" style="padding:4px 0;justify-content:flex-start;"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div>`;
+  area.appendChild(tw);
+  area.scrollTop = area.scrollHeight;
+  chatHistory.push({ role: "user", content: msg });
+  const sys = `Eres WEARIT, estilista personal directa y sin filtros. Español neutro latinoamericano, nunca "vos". Responde en máximo 2 oraciones, conciso y útil. Sin markdown.`;
+  try {
+    const data = await callClaude(sys, chatHistory);
+    const reply = data.content?.map(i => i.text || "").join("").trim();
+    chatHistory.push({ role: "assistant", content: reply });
+    tw.innerHTML = `<div class="msg-av">W</div><div class="msg-ia">${reply}</div>`;
+    area.scrollTop = area.scrollHeight;
+  } catch(e) {
+    tw.innerHTML = `<div class="msg-av">W</div><div class="msg-ia" style="color:#b84c4c;">Error al conectar.</div>`;
+  }
+}
+
+function usarSug(el) { document.getElementById("chatInp").value = el.textContent; enviarChat(); }
+function chatKey(e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); enviarChat(); } }
+function resetIA() {
+  document.getElementById("btnIA").disabled = false;
+  document.getElementById("iaResultado").style.display = "none";
+  document.getElementById("chatArea").innerHTML = "";
+  chatHistory = [];
+}
+</script>
+</body>
+</html>
